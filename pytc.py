@@ -36,13 +36,17 @@
 # along with pytc.  If not, see <http://www.gnu.org/licenses/>.
 from oauthtwitter import OAuthApi
 from time import strftime
-from sys import argv
 from urllib2 import HTTPError
 import datetime
 import os
 import re
+import sys
 
-execfile(os.path.expanduser('~/.pytcrc'))
+try:
+    execfile(os.path.expanduser('~/.pytcrc'))
+except IOError:
+    print "~/.pytcrc doesn't exist. Exiting."
+    sys.exit(1)
 
 # Colours
 def blue(msg):
@@ -213,6 +217,7 @@ def get_timeline(users=None,conv=False):
 
 
 api = OAuthApi(consumer_key, consumer_secret, oauth_token, oauth_token_secret)
+argv = sys.argv
 if len(argv) > 1:
     if argv[1] == '-u': # Update status
         status = " ".join(argv[2:])
