@@ -37,13 +37,26 @@
 from oauthtwitter import OAuthApi
 from time import strftime
 from sys import argv
-from my import *
 from urllib2 import HTTPError
 import datetime
 import os
 import re
 
 execfile(os.path.expanduser('~/.pytcrc'))
+
+# Colours
+def blue(msg):
+    return '\033[1;34m%s\033[0m' % msg
+def green(msg):
+    return '\033[0;32m%s\033[0m' % msg
+def red(msg):
+    return '\033[0;31m%s\033[0m' % msg
+def ul(msg):
+    return '\033[4;37m%s\033[0m' % msg
+def yellow(msg):
+    return '\033[0;33m%s\033[0m' % msg
+def white(msg):
+    return '\033[1;37m%s\033[0m' % msg
 
 # Some regexes:
 url = re.compile('(https?://([-\w\.]+)+(:\d+)?(/([\w/_\-\.]*(\?\S+)?)?)?)')
@@ -62,6 +75,64 @@ def usage():
     print '  pytc -u <status>\tUpdate your status'
     print '  pytc -h\t\tShow this Help message'
 
+def remove_accents(str):
+    import unicodedata
+    nkfd_form = unicodedata.normalize('NFKD', unicode(str))
+    only_ascii = nkfd_form.encode('ASCII', 'ignore')
+    return only_ascii
+
+def pretty_date(time=False):
+    """
+    Get a datetime object or a int() Epoch timestamp and return a
+    pretty string like 'an hour ago', 'Yesterday', '3 months ago',
+    'just now', etc
+    """
+    from datetime import datetime
+    from datetime import timedelta
+    from pytz import timezone
+    now = datetime.now()
+    utc = timezone('UTC')
+    #now = now.replace(tzinfo=utc)
+    if type(time) is int:
+        diff = now - datetime.fromtimestamp(time)
+    elif not time:
+        diff = now - now
+    else:
+        diff = now - time - timedelta(hours=1) # TODO: Use TZ aware timezones!
+    second_diff = diff.seconds
+    day_diff = diff.days
+
+    if day_diff < 0:
+        return ''
+
+    if day_diff == 0:
+        if second_diff < 10:
+            return "just now"
+        if second_diff < 60:
+            return str(second_diff) + " seconds ago"
+        if second_diff < 120:
+            return  "a minute ago"
+        if second_diff < 3600:
+            return str( second_diff / 60 ) + " minutes ago"
+        if second_diff < 7200:
+            return "an hour ago"
+        if second_diff < 86400:
+            return str( second_diff / 3600 ) + " hours ago"
+    if day_diff == 1:
+        return "Yesterday"
+    if day_diff < 7:
+        return str(day_diff) + " days ago"
+    if day_diff < 14:
+        return str(day_diff/7) + " week ago"
+    if day_diff < 31:
+        return str(day_diff/7) + " weeks ago"
+    if day_diff < 60:
+        return str(day_diff/30) + " month ago"
+    if day_diff < 365:
+        return str(day_diff/30) + " months ago"
+    if day_diff < 730:
+        return str(day_diff/365) + " year ago"
+    return str(day_diff/365) + " years ago"
 def hilight(text):
     text = re.sub('(@.*?)(\W|$)',green('\\1')+'\\2',text)
     text = re.sub('(#.*?)(\W|$)',white('\\1')+'\\2',text)
