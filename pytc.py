@@ -1,24 +1,7 @@
 #!/usr/bin/env python
 #
-# WARNING
-#
-# This code doesn't yet work as it needs more generalized oauth
-# support. Previously I hard-coded in my own consumer_key,
-# consumer_secret, oauth_token, and oauth_token_secret.  Obviously,
-# since this is becoming an open source application, that will
-# no longer fly.
-#
 # TODO: Incorporate the below warning into a message when
 # you run the app without a proper ~/.pytc
-#
-# WARNING ABOUT OAUTH
-#
-# The consumer key and consumer secret in this file are publicly
-# available.  This is not a great idea, as any application can
-# impersonate this one to twitter.  But it's included here for your
-# convenience.  If you want to register your own, just go to
-# http://dev.twitter.com and register an app, and replace the below
-# with your own key and secret before running pytc.
 #
 # This file is part of pytc.
 #
@@ -58,10 +41,6 @@ def yellow(msg):
 def white(msg):
     return '\033[1;37m%s\033[0m' % msg
 
-# Some regexes:
-url = re.compile('(https?://([-\w\.]+)+(:\d+)?(/([\w/_\-\.]*(\?\S+)?)?)?)')
-user_regex = re.compile('(@?' + '|'.join(usernames) + ')')
-
 def usage():
     print 'Usage:'
     print '  pytc <tweets>\t\tFetch public timeline'
@@ -74,6 +53,21 @@ def usage():
     print '  pytc -r\t\tFetch Replies'
     print '  pytc -u <status>\tUpdate your status'
     print '  pytc -h\t\tShow this Help message'
+
+def get_input(prompt,vartype,default=''):
+    import sys
+    while True:
+        var = raw_input(prompt)
+        if var == 'q':
+            sys.exit(0)
+        if var == '' and default != '':
+            return default
+        try:
+            vartype(var)
+        except:
+            print '%s is not valid. Expected a %s.' % (var,vartype)
+            continue
+        return vartype(var)
 
 def remove_accents(str):
     import unicodedata
@@ -211,6 +205,33 @@ def get_timeline(users=None,conv=False):
     print userline
     pretty_print(timeline)
 
+try:
+    execfile(conffile)
+except IOError:
+    print "Could not open %s." % conffile
+    if get_input("Would you like me to create it? [y/N] ",str) == 'y':
+        print 'WARNING'
+        print '''
+WARNING ABOUT OAUTH
+
+pytc will write you a sample %s file. This will contain a
+consumer_key and consumer_secret.  Since this is an open source
+app, these are publicly available.  This is not a great idea, as
+it means that any application can impersonate this one to Twitter.
+
+It's included here for your convenience.  If you want to register
+your own, just go to http://dev.twitter.com and register an app,
+and replace the values with your own key and secret before running
+pytc again.\n''' % conffile
+        if get_input("Continue? [y/N] ",str) == 'y':
+            f = open(conffile,'w')
+            f.write('''consumer_key = "XMmmwf1XQvtjjyZE2Cpg"
+consumer_secret = "0zZ71NQjeLMMk9lRI3k8uaFBdKoPywZNpZY20QXU"\n''')
+    sys.exit(0) # If user doesn't confirm above twice, 
+
+# Some regexes:
+url = re.compile('(https?://([-\w\.]+)+(:\d+)?(/([\w/_\-\.]*(\?\S+)?)?)?)')
+user_regex = re.compile('(@?' + '|'.join(usernames) + ')')
 
 api = OAuthApi(consumer_key, consumer_secret, oauth_token, oauth_token_secret)
 argv = sys.argv
