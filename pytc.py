@@ -198,10 +198,15 @@ def get_timeline(users=None,conv=False):
             user_match = re.compile('@(' + '|'.join(users) + ')',re.IGNORECASE)
             # List comprehension to filter all tweets for only ones containing names
             timeline = [t for t in timeline if user_match.search(t['text'])]
-    else:
+    elif usernames:
         options = {'screen_name':','.join(usernames)}
         userline = get_userlines(options)
         timeline = api.GetUserTimeline()
+    else:
+        print 'pytc -t will not work without defining your username.'
+        print 'Please specify your username(s) in %s in the form:' % conffile
+        print 'usernames = ["user1","user2"]'
+        sys.exit(1)
     print userline
     pretty_print(timeline)
 
@@ -231,7 +236,12 @@ consumer_secret = "0zZ71NQjeLMMk9lRI3k8uaFBdKoPywZNpZY20QXU"\n''')
 
 # Some regexes:
 url = re.compile('(https?://([-\w\.]+)+(:\d+)?(/([\w/_\-\.]*(\?\S+)?)?)?)')
-user_regex = re.compile('(@?' + '|'.join(usernames) + ')')
+try:
+    user_regex = re.compile('(@?' + '|'.join(usernames) + ')')
+except NameError:
+    print 'No usernames key in %s. Your username won\'t be highlighted.' % conffile
+    usernames = None
+    user_regex = re.compile('a^') # This never matches anything
 
 api = OAuthApi(consumer_key, consumer_secret, oauth_token, oauth_token_secret)
 argv = sys.argv
