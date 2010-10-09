@@ -42,11 +42,7 @@ import os
 import re
 import sys
 
-try:
-    execfile(os.path.expanduser('~/.pytcrc'))
-except IOError:
-    print "~/.pytcrc doesn't exist. Exiting."
-    sys.exit(1)
+conffile = os.path.expanduser('~/.pytcrc')
 
 # Colours
 def blue(msg):
