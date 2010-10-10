@@ -25,6 +25,9 @@ import os
 import re
 import sys
 
+VERSION=0.1
+YEARS='2010'
+
 conffile = os.path.expanduser('~/.pytcrc')
 
 # Colours
@@ -41,7 +44,15 @@ def yellow(msg):
 def white(msg):
     return '\033[1;37m%s\033[0m' % msg
 
+def version():
+    print 'pytc %s Copyright (C) %s Bryan Kam' % (VERSION,YEARS)
+
 def usage():
+    version()
+    print '''This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.
+This is free software, and you are welcome to redistribute it
+under certain conditions; see COPYING for details.'''
+    print
     print 'Usage:'
     print '  pytc <tweets>\t\tFetch public timeline'
     print '  pytc -f [users]\tFetch information about your friends'
@@ -53,6 +64,7 @@ def usage():
     print '  pytc -r\t\tFetch Replies'
     print '  pytc -u <status>\tUpdate your status'
     print '  pytc -h\t\tShow this Help message'
+    print '  pytc -v\t\tShow version of this software'
 
 def get_input(prompt,vartype,default=''):
     import sys
@@ -297,6 +309,8 @@ if len(argv) > 1:
         pretty_print(timeline)
     elif argv[1] == '-h': # Help
         usage()
+    elif argv[1] == '-v': # Help
+        version()
     else:
         try:
             options = {'count':int(argv[1])}
