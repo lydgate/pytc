@@ -1,0 +1,13 @@
+pytc.py
+	Implement timezone aware datetimes
+	In conversation mode, tweets are not always properly sorted -- why not?
+	Better handling of conversations
+	| Currently if one person tweets very quickly, you can lose half the
+	| conversation. Rather than grepping for @s, maybe we can search a user's
+	| stream for this somehow?
+	Consider eliminating annoying dependencies and coding oauth myself.
+README
+	Explain how to read this file with vim outliner
+Create new trash dev account for pytc-public
+	Import module of consumer (containing key and secret)
+	Document how to set up consumer secret if they want to use their own
