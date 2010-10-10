@@ -1,24 +1,7 @@
 #!/usr/bin/env python
 #
-# WARNING
-#
-# This code doesn't yet work as it needs more generalized oauth
-# support. Previously I hard-coded in my own consumer_key,
-# consumer_secret, oauth_token, and oauth_token_secret.  Obviously,
-# since this is becoming an open source application, that will
-# no longer fly.
-#
 # TODO: Incorporate the below warning into a message when
 # you run the app without a proper ~/.pytc
-#
-# WARNING ABOUT OAUTH
-#
-# The consumer key and consumer secret in this file are publicly
-# available.  This is not a great idea, as any application can
-# impersonate this one to twitter.  But it's included here for your
-# convenience.  If you want to register your own, just go to
-# http://dev.twitter.com and register an app, and replace the below
-# with your own key and secret before running pytc.
 #
 # This file is part of pytc.
 #
@@ -36,16 +19,16 @@
 # along with pytc.  If not, see <http://www.gnu.org/licenses/>.
 from oauthtwitter import OAuthApi
 from time import strftime
-from sys import argv
 from urllib2 import HTTPError
 import datetime
 import os
 import re
+import sys
 
 VERSION=0.1
 YEARS='2010'
 
-execfile(os.path.expanduser('~/.pytcrc'))
+conffile = os.path.expanduser('~/.pytcrc')
 
 # Colours
 def blue(msg):
@@ -60,10 +43,6 @@ def yellow(msg):
     return '\033[0;33m%s\033[0m' % msg
 def white(msg):
     return '\033[1;37m%s\033[0m' % msg
-
-# Some regexes:
-url = re.compile('(https?://([-\w\.]+)+(:\d+)?(/([\w/_\-\.]*(\?\S+)?)?)?)')
-user_regex = re.compile('(@?' + '|'.join(usernames) + ')')
 
 def version():
     print 'pytc %s Copyright (C) %s Bryan Kam' % (VERSION,YEARS)
@@ -86,6 +65,21 @@ under certain conditions; see COPYING for details.'''
     print '  pytc -u <status>\tUpdate your status'
     print '  pytc -h\t\tShow this Help message'
     print '  pytc -v\t\tShow version of this software'
+
+def get_input(prompt,vartype,default=''):
+    import sys
+    while True:
+        var = raw_input(prompt)
+        if var == 'q':
+            sys.exit(0)
+        if var == '' and default != '':
+            return default
+        try:
+            vartype(var)
+        except:
+            print '%s is not valid. Expected a %s.' % (var,vartype)
+            continue
+        return vartype(var)
 
 def remove_accents(str):
     import unicodedata
@@ -216,15 +210,87 @@ def get_timeline(users=None,conv=False):
             user_match = re.compile('@(' + '|'.join(users) + ')',re.IGNORECASE)
             # List comprehension to filter all tweets for only ones containing names
             timeline = [t for t in timeline if user_match.search(t['text'])]
-    else:
+    elif usernames:
         options = {'screen_name':','.join(usernames)}
         userline = get_userlines(options)
         timeline = api.GetUserTimeline()
+    else:
+        print 'pytc -t will not work without defining your username.'
+        print 'Please specify your username(s) in %s in the form:' % conffile
+        print 'usernames = ["user1","user2"]'
+        sys.exit(1)
     print userline
     pretty_print(timeline)
 
+def create_config():
+    print "Could not open %s." % conffile
+    if get_input("Would you like me to create it? [y/N] ",str) == 'y':
+        print '''
+WARNING ABOUT OAUTH
+
+pytc will write you a sample %s file. This will contain a
+consumer_key and consumer_secret.  Since this is an open source
+app, these are publicly available.  This is not a great idea, as
+it means that any application can impersonate this one to Twitter.
+
+It's included here for your convenience.  If you want to register
+your own, just go to http://dev.twitter.com and register an app,
+and replace the values with your own key and secret before running
+pytc again.\n''' % conffile
+        if get_input("Continue? [y/N] ",str) == 'y':
+            f = open(conffile,'w')
+            f.write('''consumer_key = "XMmmwf1XQvtjjyZE2Cpg"
+consumer_secret = "0zZ71NQjeLMMk9lRI3k8uaFBdKoPywZNpZY20QXU"\n''')
+            return
+    sys.exit(0) # If user doesn't confirm above twice, 
+
+def oauth_authorize():
+    api = OAuthApi(consumer_key, consumer_secret)
+    # Get temporary credentials for the next few commands:
+    temp_credentials = api.getRequestToken()
+    # User pastes this into their browser to bring back a pin number:
+    print 'You must authorize pytc to interact with your Twitter account.'
+    print 'Please paste the following URL into your browser to obtain a PIN.'
+    print api.getAuthorizationURL(temp_credentials)
+    # Get the pin # from the user and get our permanent credentials:
+    oauth_verifier = raw_input('What is the PIN? ')
+    access_token = api.getAccessToken(temp_credentials, oauth_verifier)
+    oauth_token = access_token['oauth_token']
+    oauth_token_secret = access_token['oauth_token_secret']
+    f = open(conffile,'a')
+    f.write('''oauth_token = "%s"
+oauth_token_secret = "%s"\n''' % (oauth_token, oauth_token_secret))
+    # Set up api a test API call using our new credentials
+    return oauth_token, oauth_token_secret
+
+try:
+    execfile(conffile)
+except IOError:
+    create_config()
+    execfile(conffile)
+
+try:
+    consumer_key, consumer_secret # Check that these are set correctly
+except NameError:
+    create_config()
+    execfile(conffile)
+
+try:
+    oauth_token, oauth_token_secret
+except NameError:
+    oauth_token, oauth_token_secret = oauth_authorize()
 
 api = OAuthApi(consumer_key, consumer_secret, oauth_token, oauth_token_secret)
+# Some regexes:
+url = re.compile('(https?://([-\w\.]+)+(:\d+)?(/([\w/_\-\.]*(\?\S+)?)?)?)')
+try:
+    user_regex = re.compile('(@?' + '|'.join(usernames) + ')')
+except NameError:
+    print 'No usernames key in %s. Your username won\'t be highlighted.' % conffile
+    usernames = None
+    user_regex = re.compile('a^') # This never matches anything
+
+argv = sys.argv
 if len(argv) > 1:
     if argv[1] == '-u': # Update status
         status = " ".join(argv[2:])
