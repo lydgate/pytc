@@ -1,17 +1,16 @@
 pytc.py
-	Clean up current embedded oauth-situation
-		When run without ~/.pytc, create one with default consumer key and warn the user
-		When run with ~/.pytc, read consumer_key and consumer_secret from there
-			If no oauth_{token,token_secret} then create these
-				Probably using oauth-python-twitter2
-			If it has these, run (finally!)
+	Implement timezone aware datetimes
+	In conversation mode, tweets are not always properly sorted -- why not?
+	Better handling of conversations
+	| Currently if one person tweets very quickly, you can lose half the
+	| conversation. Rather than grepping for @s, maybe we can search a user's
+	| stream for this somehow?
+	Make it so -h and -v (and possibly -b) work without authentication.
 README
 	Clarify which external products are required
 		Need links
 		Instructions
-	Explain how to read this vile with vim outliner
+	Explain how to read this file with vim outliner
 Create new trash dev account for pytc-public
 	Import module of consumer (containing key and secret)
 	Document how to set up consumer secret if they want to use their own
-Set up oauth activation system
-	store authorization information in ~/.pytc?
