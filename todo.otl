@@ -5,7 +5,7 @@ pytc.py
 	| Currently if one person tweets very quickly, you can lose half the
 	| conversation. Rather than grepping for @s, maybe we can search a user's
 	| stream for this somehow?
-	Make it so -h and -v (and possibly -b) work without authentication.
+	Consider eliminating annoying dependencies and coding oauth myself.
 README
 	Explain how to read this file with vim outliner
 Create new trash dev account for pytc-public
