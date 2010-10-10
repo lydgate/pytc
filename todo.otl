@@ -16,8 +16,6 @@ pytc.py
 		| shouldn't write consumer_key and _secret until after that anyway
 		| though
 		Eventually this could support profiles, to post to different accounts
-README
-	Explain how to read this file with vim outliner
 Create new trash dev account for pytc-public
 	Import module of consumer (containing key and secret)
 	Document how to set up consumer secret if they want to use their own
