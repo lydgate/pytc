@@ -95,10 +95,7 @@ def pretty_date(time=False):
     """
     from datetime import datetime
     from datetime import timedelta
-    from pytz import timezone
     now = datetime.now()
-    utc = timezone('UTC')
-    #now = now.replace(tzinfo=utc)
     if type(time) is int:
         diff = now - datetime.fromtimestamp(time)
     elif not time:
