@@ -260,6 +260,16 @@ oauth_token_secret = "%s"\n''' % (oauth_token, oauth_token_secret))
     # Set up api a test API call using our new credentials
     return oauth_token, oauth_token_secret
 
+argv = sys.argv
+if len(argv) > 1:
+    if argv[1] == '-h': # Help
+        usage()
+        sys.exit(0)
+    elif argv[1] == '-v': # Help
+        version()
+        sys.exit(0)
+
+# Anything else will require authentication.
 try:
     execfile(conffile)
 except IOError:
@@ -287,7 +297,6 @@ except NameError:
     usernames = None
     user_regex = re.compile('a^') # This never matches anything
 
-argv = sys.argv
 if len(argv) > 1:
     if argv[1] == '-u': # Update status
         status = " ".join(argv[2:])
@@ -338,10 +347,6 @@ if len(argv) > 1:
     elif argv[1] == '-b': # Public timeline
         timeline = api.GetPublicTimeline()
         pretty_print(timeline)
-    elif argv[1] == '-h': # Help
-        usage()
-    elif argv[1] == '-v': # Help
-        version()
     else:
         try:
             options = {'count':int(argv[1])}
