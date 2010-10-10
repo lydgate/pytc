@@ -7,9 +7,6 @@ pytc.py
 	| stream for this somehow?
 	Make it so -h and -v (and possibly -b) work without authentication.
 README
-	Clarify which external products are required
-		Need links
-		Instructions
 	Explain how to read this file with vim outliner
 Create new trash dev account for pytc-public
 	Import module of consumer (containing key and secret)
