@@ -1,4 +1,4 @@
-pytc - a command line python twitter client
+pytc 0.1 - a command line python twitter client
 Copyright (C) 2010  Bryan Kam
 Email: pytc@vo.racio.us
 
@@ -60,4 +60,36 @@ oauth-python-twitter2 though.
   Usage
 =========
 
-Please see pytc -h.
+Usage is simple. Please see pytc -h.
+
+Some examples:
+
+Check your Twitter timeline;
+  pytc
+
+Show last 75 items on your Twitter timeline:
+  pytc 75
+
+Update your Twitter status:
+  pytc -u "Testing out pytc. It works!"
+
+Read fictionaluser's status:
+  pytc -t fictionaluser
+
+Search for a term:
+  pytc -s searchterm
+
+================
+  Known Issues
+================
+
+ - There's a dirty hack in the timezone code which subtracts an
+   hour. Not sure why this is necessary, must be GMT vs BST.
+
+ - The "conversation" (-c) feature only half-works. It doesn't
+   properly sort times for reasons I don't quite understand, and
+   doesn't really work if one user is tweeting much more frequently
+   than the other, because the responses to the tweets may be lost.
+
+ - The dependency situation above is tedious. I may end up trying
+   to reduce this to just OAuth2.

@@ -1,1 +1,4 @@
-
+Release 0.1
+ - Initial version. Supports tweeting, searching, reading other's 
+   timelines, the public timeline, some basic info about users, 
+   and @replies.

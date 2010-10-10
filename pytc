@@ -64,7 +64,7 @@ under certain conditions; see COPYING for details.'''
     print '  pytc -r\t\tFetch Replies'
     print '  pytc -u <status>\tUpdate your status'
     print '  pytc -h\t\tShow this Help message'
-    print '  pytc -v\t\tShow version of this software'
+    print '  pytc -v\t\tShow Version of this software'
 
 def get_input(prompt,vartype,default=''):
     import sys
