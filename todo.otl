@@ -6,6 +6,16 @@ pytc.py
 	| conversation. Rather than grepping for @s, maybe we can search a user's
 	| stream for this somehow?
 	Consider eliminating annoying dependencies and coding oauth myself.
+	Support for alternate config files
+		Possibly change this to named config files
+		E.g., ~/.pytc/user1.rc and so on
+		Would need to fetch username that it's authenticated with
+		| Looks like this can be done with
+		| api.ApiCall('account/verify_credentials',type='GET')
+		| but this is of course after you've authenticated -- potentially
+		| shouldn't write consumer_key and _secret until after that anyway
+		| though
+		Eventually this could support profiles, to post to different accounts
 README
 	Explain how to read this file with vim outliner
 Create new trash dev account for pytc-public
