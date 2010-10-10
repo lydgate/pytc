@@ -222,12 +222,9 @@ def get_timeline(users=None,conv=False):
     print userline
     pretty_print(timeline)
 
-try:
-    execfile(conffile)
-except IOError:
+def create_config():
     print "Could not open %s." % conffile
     if get_input("Would you like me to create it? [y/N] ",str) == 'y':
-        print 'WARNING'
         print '''
 WARNING ABOUT OAUTH
 
@@ -244,8 +241,27 @@ pytc again.\n''' % conffile
             f = open(conffile,'w')
             f.write('''consumer_key = "XMmmwf1XQvtjjyZE2Cpg"
 consumer_secret = "0zZ71NQjeLMMk9lRI3k8uaFBdKoPywZNpZY20QXU"\n''')
+            return
     sys.exit(0) # If user doesn't confirm above twice, 
 
+try:
+    execfile(conffile)
+except IOError:
+    create_config()
+    execfile(conffile)
+
+try:
+    consumer_key, consumer_secret # Check that these are set correctly
+except NameError:
+    create_config()
+    execfile(conffile)
+
+try:
+    oauth_token, oauth_token_secret
+except NameError:
+    print 'Sorry, need to implement handling of oauth_token and oauth_token_secret.'
+
+api = OAuthApi(consumer_key, consumer_secret, oauth_token, oauth_token_secret)
 # Some regexes:
 url = re.compile('(https?://([-\w\.]+)+(:\d+)?(/([\w/_\-\.]*(\?\S+)?)?)?)')
 try:
@@ -255,7 +271,6 @@ except NameError:
     usernames = None
     user_regex = re.compile('a^') # This never matches anything
 
-api = OAuthApi(consumer_key, consumer_secret, oauth_token, oauth_token_secret)
 argv = sys.argv
 if len(argv) > 1:
     if argv[1] == '-u': # Update status
