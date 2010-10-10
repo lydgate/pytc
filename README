@@ -93,3 +93,10 @@ Search for a term:
 
  - The dependency situation above is tedious. I may end up trying
    to reduce this to just OAuth2.
+
+=============
+  Todo List
+=============
+
+Saved separately in todo.otl in this repo. It will look prettier 
+with The Vim Outliner: http://bike-nomad.com/vim/vimoutliner.html
