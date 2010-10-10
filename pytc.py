@@ -244,6 +244,25 @@ consumer_secret = "0zZ71NQjeLMMk9lRI3k8uaFBdKoPywZNpZY20QXU"\n''')
             return
     sys.exit(0) # If user doesn't confirm above twice, 
 
+def oauth_authorize():
+    api = OAuthApi(consumer_key, consumer_secret)
+    # Get temporary credentials for the next few commands:
+    temp_credentials = api.getRequestToken()
+    # User pastes this into their browser to bring back a pin number:
+    print 'You must authorize pytc to interact with your Twitter account.'
+    print 'Please paste the following URL into your browser to obtain a PIN.'
+    print api.getAuthorizationURL(temp_credentials)
+    # Get the pin # from the user and get our permanent credentials:
+    oauth_verifier = raw_input('What is the PIN? ')
+    access_token = api.getAccessToken(temp_credentials, oauth_verifier)
+    oauth_token = access_token['oauth_token']
+    oauth_token_secret = access_token['oauth_token_secret']
+    f = open(conffile,'a')
+    f.write('''oauth_token = "%s"
+oauth_token_secret = "%s"\n''' % (oauth_token, oauth_token_secret))
+    # Set up api a test API call using our new credentials
+    return oauth_token, oauth_token_secret
+
 try:
     execfile(conffile)
 except IOError:
@@ -259,7 +278,7 @@ except NameError:
 try:
     oauth_token, oauth_token_secret
 except NameError:
-    print 'Sorry, need to implement handling of oauth_token and oauth_token_secret.'
+    oauth_token, oauth_token_secret = oauth_authorize()
 
 api = OAuthApi(consumer_key, consumer_secret, oauth_token, oauth_token_secret)
 # Some regexes:
