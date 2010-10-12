@@ -17,13 +17,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with pytc.  If not, see <http://www.gnu.org/licenses/>.
-from oauthtwitter import OAuthApi
 from time import strftime
 from urllib2 import HTTPError
 import datetime
 import os
 import re
 import sys
+import tweepy
 
 VERSION=0.1
 YEARS='2010'
@@ -242,18 +242,20 @@ consumer_secret = "0zZ71NQjeLMMk9lRI3k8uaFBdKoPywZNpZY20QXU"\n''')
     sys.exit(0) # If user doesn't confirm above twice, 
 
 def oauth_authorize():
-    api = OAuthApi(consumer_key, consumer_secret)
-    # Get temporary credentials for the next few commands:
-    temp_credentials = api.getRequestToken()
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     # User pastes this into their browser to bring back a pin number:
     print 'You must authorize pytc to interact with your Twitter account.'
     print 'Please paste the following URL into your browser to obtain a PIN.'
-    print api.getAuthorizationURL(temp_credentials)
+    print auth.get_authorization_url()
     # Get the pin # from the user and get our permanent credentials:
     oauth_verifier = raw_input('What is the PIN? ')
-    access_token = api.getAccessToken(temp_credentials, oauth_verifier)
-    oauth_token = access_token['oauth_token']
-    oauth_token_secret = access_token['oauth_token_secret']
+    try:
+        auth.get_access_token(oauth_verifier)
+    except tweepy.TweepError:
+        print 'Error! failed to get access token.'
+        sys.exit(1)
+    oauth_token = auth.access_token.key
+    oauth_token_secret = auth.access_token.secret
     f = open(conffile,'a')
     f.write('''oauth_token = "%s"
 oauth_token_secret = "%s"\n''' % (oauth_token, oauth_token_secret))
@@ -287,7 +289,9 @@ try:
 except NameError:
     oauth_token, oauth_token_secret = oauth_authorize()
 
-api = OAuthApi(consumer_key, consumer_secret, oauth_token, oauth_token_secret)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(oauth_token, oauth_token_secret)
+api = tweepy.API(auth)
 # Some regexes:
 url = re.compile('(https?://([-\w\.]+)+(:\d+)?(/([\w/_\-\.]*(\?\S+)?)?)?)')
 try:
