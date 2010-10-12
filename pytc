@@ -160,54 +160,52 @@ def pretty_print(timeline):
         line = re.sub(url, yellow('\\1'), line)
         print remove_accents(line)
 
-def get_userlines(options):
-    user_detail_list = api.ApiCall('users/lookup','GET',options)
+def get_userlines(usernames):
+    user_detail_list = api.lookup_users(screen_names=usernames)
     userlines = ''
     for user_details in user_detail_list:
-        followers = user_details['followers_count']
-        followed  = user_details['friends_count']
-        joined = pretty_date(twdate_to_datetime(user_details['created_at']))
+        followers = user_details.followers_count
+        followed  = user_details.friends_count
+        joined = pretty_date(user_details.created_at)
         if followed == 0 or followers/followed > .5:
             friends = green('%s/%s' % (followed, followers))
         else:
             friends = red('%s/%s' % (followed, followers))
-        tweets = user_details['statuses_count']
+        tweets = user_details.statuses_count
         if tweets < 50:
             tweets = red(tweets)
         userlines += '%s/%s (%s) %s - %s. (Created %s)\n' \
-                % (blue(user_details['screen_name']),
+                % (blue(user_details.screen_name),
                 tweets,
-                user_details['location'],
+                user_details.location,
                 friends,
-                user_details['description'],
+                user_details.description,
                 joined)
     return userlines
 
 def get_timeline(users=None,conv=False):
     if users:
         timeline = []
-        options = {'screen_name':','.join(users)}
-        userline = get_userlines(options)
+        userline = get_userlines(users)
         for user in users:
             if conv: # Get more replies if you're looking for conversation.
-                options = {'screen_name':user,'count':100}
+                count = 100 
             else:
-                options = {'screen_name':user}
+                count = 20
             try:
-                timeline += api.GetUserTimeline(options)
-            except HTTPError:
+                timeline += api.user_timeline(user,count=count)
+            except tweepy.error.TweepError:
                 print 'Error fetching tweets from %s.' % user
         if len(users) > 1:
-            timeline = sorted(timeline, key=lambda k: k['created_at'],reverse=True)
+            timeline = sorted(timeline, key=lambda k: k.created_at,reverse=True)
         if conv:
             # Create a regex which includes all participants' names
             user_match = re.compile('@(' + '|'.join(users) + ')',re.IGNORECASE)
             # List comprehension to filter all tweets for only ones containing names
-            timeline = [t for t in timeline if user_match.search(t['text'])]
+            timeline = [t for t in timeline if user_match.search(t.text)]
     elif usernames:
-        options = {'screen_name':','.join(usernames)}
-        userline = get_userlines(options)
-        timeline = api.GetUserTimeline()
+        userline = get_userlines(usernames)
+        timeline = api.user_timeline()
     else:
         print 'pytc -t will not work without defining your username.'
         print 'Please specify your username(s) in %s in the form:' % conffile
