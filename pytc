@@ -316,19 +316,15 @@ if len(argv) > 1:
                 get_timeline(argv[2:])
     elif argv[1] == '-f': # Fetch friendlist
         if len(argv) > 2:
-            options = {'screen_name':','.join(argv[2:])}
-            print get_userlines(options)
+            print get_userlines(argv[2:])
         else:
-            options = {'cursor':-1}
             followers = []
-            userlines = ''
-            while options['cursor'] != 0:
-                ret = api.GetFollowers(options)
-                chunk = [u['screen_name'] for u in ret['users']]
-                options2 = {'screen_name':','.join(chunk)}
-                userlines += get_userlines(options2)
-                options['cursor'] = ret['next_cursor']
-            print userlines
+            for follower in tweepy.Cursor(api.followers).items():
+                followers.append(follower.screen_name)
+                if len(followers) > 99:
+                    print get_userlines(followers)
+                    followers = []
+            print get_userlines(followers)
     elif argv[1] == '-s': # Search twitter!
         if len(argv) < 3:
             error('You need some manner of query.')
