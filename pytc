@@ -141,22 +141,19 @@ def hilight(text):
     text = re.sub('(#.*?)(\W|$)',white('\\1')+'\\2',text)
     return text
 
-def twdate_to_datetime(string):
-    return datetime.datetime.strptime(string, '%a %b %d %H:%M:%S +0000 %Y')
-
 def pretty_print(timeline):
     for tweet in timeline:
-        user = blue(tweet['user']['screen_name'])
-        time = pretty_date(twdate_to_datetime(tweet['created_at']))
-        if 'retweeted_status' in tweet: # Check if this tweet is an RT
+        user = blue(tweet.user.screen_name)
+        time = pretty_date(tweet.created_at)
+        if hasattr(tweet, 'retweeted_status'): # Check if this tweet is an RT
             # If so, print the user name in green and original twit in blue
-            orig_user = green('@'+tweet['retweeted_status']['user']['screen_name'])
-            text = hilight(tweet['retweeted_status']['text'])
+            orig_user = green('@'+tweet.retweeted_status.user.screen_name)
+            text = hilight(tweet.retweeted_status.text)
 
             line = '%s: RT %s (via %s) (%s)' % (user, text, orig_user, time)
         else:
             # Otherwise, just print the name in blue and the tweet
-            text = hilight(tweet['text'])
+            text = hilight(tweet.text)
 
             line = '%s: %s (%s)' % (user, text, time)
         line = re.sub(user_regex, red('\\1'), line) # Highlight username.
@@ -354,10 +351,10 @@ if len(argv) > 1:
     else:
         try:
             options = {'count':int(argv[1])}
-            timeline = api.GetHomeTimeline(options)
+            timeline = api.home_timeline()
             pretty_print(timeline)
         except ValueError:
             usage()
 else: # Otherwise just print timeline
-    timeline = api.GetHomeTimeline()
+    timeline = api.home_timeline()
     pretty_print(timeline)
