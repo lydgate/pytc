@@ -343,8 +343,7 @@ if len(argv) > 1:
         pretty_print(timeline)
     else:
         try:
-            options = {'count':int(argv[1])}
-            timeline = api.home_timeline()
+            timeline = api.home_timeline(count=int(argv[1]))
             pretty_print(timeline)
         except ValueError:
             usage()
