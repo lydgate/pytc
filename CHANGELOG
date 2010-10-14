@@ -1,3 +1,6 @@
+Hotfix 0.2.1
+ - Fixed pytc <count> to specify how many tweets to retrieve.
+
 Release 0.2
  - Switched to tweepy library.
 
