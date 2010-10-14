@@ -330,12 +330,11 @@ if len(argv) > 1:
             error('You need some manner of query.')
         else:
             q = ' '.join(argv[2:])
-            options = {'q':q,'lang':'en'}
-            search = api.ApiCall('search','GET',options)
+            search = api.search(q)
             results = []
-            for status in search['statuses']:
+            for status in [i.id for i in search]:
                 try:
-                    results.append(api.ApiCall('statuses/show/%s' % status,'GET'))
+                    results.append(api.get_status(status))
                 except HTTPError:
                     continue
             pretty_print(results)
