@@ -17,13 +17,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with pytc.  If not, see <http://www.gnu.org/licenses/>.
-from oauthtwitter import OAuthApi
 from time import strftime
 from urllib2 import HTTPError
 import datetime
 import os
 import re
 import sys
+import tweepy
 
 VERSION=0.1
 YEARS='2010'
@@ -141,76 +141,71 @@ def hilight(text):
     text = re.sub('(#.*?)(\W|$)',white('\\1')+'\\2',text)
     return text
 
-def twdate_to_datetime(string):
-    return datetime.datetime.strptime(string, '%a %b %d %H:%M:%S +0000 %Y')
-
 def pretty_print(timeline):
     for tweet in timeline:
-        user = blue(tweet['user']['screen_name'])
-        time = pretty_date(twdate_to_datetime(tweet['created_at']))
-        if 'retweeted_status' in tweet: # Check if this tweet is an RT
+        user = blue(tweet.user.screen_name)
+        time = pretty_date(tweet.created_at)
+        if hasattr(tweet, 'retweeted_status'): # Check if this tweet is an RT
             # If so, print the user name in green and original twit in blue
-            orig_user = green('@'+tweet['retweeted_status']['user']['screen_name'])
-            text = hilight(tweet['retweeted_status']['text'])
+            orig_user = green('@'+tweet.retweeted_status.user.screen_name)
+            text = hilight(tweet.retweeted_status.text)
 
             line = '%s: RT %s (via %s) (%s)' % (user, text, orig_user, time)
         else:
             # Otherwise, just print the name in blue and the tweet
-            text = hilight(tweet['text'])
+            text = hilight(tweet.text)
 
             line = '%s: %s (%s)' % (user, text, time)
         line = re.sub(user_regex, red('\\1'), line) # Highlight username.
         line = re.sub(url, yellow('\\1'), line)
         print remove_accents(line)
 
-def get_userlines(options):
-    user_detail_list = api.ApiCall('users/lookup','GET',options)
+def get_userlines(usernames):
+    user_detail_list = api.lookup_users(screen_names=usernames)
     userlines = ''
     for user_details in user_detail_list:
-        followers = user_details['followers_count']
-        followed  = user_details['friends_count']
-        joined = pretty_date(twdate_to_datetime(user_details['created_at']))
+        followers = user_details.followers_count
+        followed  = user_details.friends_count
+        joined = pretty_date(user_details.created_at)
         if followed == 0 or followers/followed > .5:
             friends = green('%s/%s' % (followed, followers))
         else:
             friends = red('%s/%s' % (followed, followers))
-        tweets = user_details['statuses_count']
+        tweets = user_details.statuses_count
         if tweets < 50:
             tweets = red(tweets)
         userlines += '%s/%s (%s) %s - %s. (Created %s)\n' \
-                % (blue(user_details['screen_name']),
+                % (blue(user_details.screen_name),
                 tweets,
-                user_details['location'],
+                user_details.location,
                 friends,
-                user_details['description'],
+                user_details.description,
                 joined)
     return userlines
 
 def get_timeline(users=None,conv=False):
     if users:
         timeline = []
-        options = {'screen_name':','.join(users)}
-        userline = get_userlines(options)
+        userline = get_userlines(users)
         for user in users:
             if conv: # Get more replies if you're looking for conversation.
-                options = {'screen_name':user,'count':100}
+                count = 100 
             else:
-                options = {'screen_name':user}
+                count = 20
             try:
-                timeline += api.GetUserTimeline(options)
-            except HTTPError:
+                timeline += api.user_timeline(user,count=count)
+            except tweepy.error.TweepError:
                 print 'Error fetching tweets from %s.' % user
         if len(users) > 1:
-            timeline = sorted(timeline, key=lambda k: k['created_at'],reverse=True)
+            timeline = sorted(timeline, key=lambda k: k.created_at,reverse=True)
         if conv:
             # Create a regex which includes all participants' names
             user_match = re.compile('@(' + '|'.join(users) + ')',re.IGNORECASE)
             # List comprehension to filter all tweets for only ones containing names
-            timeline = [t for t in timeline if user_match.search(t['text'])]
+            timeline = [t for t in timeline if user_match.search(t.text)]
     elif usernames:
-        options = {'screen_name':','.join(usernames)}
-        userline = get_userlines(options)
-        timeline = api.GetUserTimeline()
+        userline = get_userlines(usernames)
+        timeline = api.user_timeline()
     else:
         print 'pytc -t will not work without defining your username.'
         print 'Please specify your username(s) in %s in the form:' % conffile
@@ -242,18 +237,20 @@ consumer_secret = "0zZ71NQjeLMMk9lRI3k8uaFBdKoPywZNpZY20QXU"\n''')
     sys.exit(0) # If user doesn't confirm above twice, 
 
 def oauth_authorize():
-    api = OAuthApi(consumer_key, consumer_secret)
-    # Get temporary credentials for the next few commands:
-    temp_credentials = api.getRequestToken()
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     # User pastes this into their browser to bring back a pin number:
     print 'You must authorize pytc to interact with your Twitter account.'
     print 'Please paste the following URL into your browser to obtain a PIN.'
-    print api.getAuthorizationURL(temp_credentials)
+    print auth.get_authorization_url()
     # Get the pin # from the user and get our permanent credentials:
     oauth_verifier = raw_input('What is the PIN? ')
-    access_token = api.getAccessToken(temp_credentials, oauth_verifier)
-    oauth_token = access_token['oauth_token']
-    oauth_token_secret = access_token['oauth_token_secret']
+    try:
+        auth.get_access_token(oauth_verifier)
+    except tweepy.TweepError:
+        print 'Error! failed to get access token.'
+        sys.exit(1)
+    oauth_token = auth.access_token.key
+    oauth_token_secret = auth.access_token.secret
     f = open(conffile,'a')
     f.write('''oauth_token = "%s"
 oauth_token_secret = "%s"\n''' % (oauth_token, oauth_token_secret))
@@ -287,7 +284,9 @@ try:
 except NameError:
     oauth_token, oauth_token_secret = oauth_authorize()
 
-api = OAuthApi(consumer_key, consumer_secret, oauth_token, oauth_token_secret)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(oauth_token, oauth_token_secret)
+api = tweepy.API(auth)
 # Some regexes:
 url = re.compile('(https?://([-\w\.]+)+(:\d+)?(/([\w/_\-\.]*(\?\S+)?)?)?)')
 try:
@@ -300,12 +299,12 @@ except NameError:
 if len(argv) > 1:
     if argv[1] == '-u': # Update status
         status = " ".join(argv[2:])
-        if len(status) > 139:
+        if len(status) > 140:
             print 'Error: Status too long (%s characters)' % len(status)
         else:
-            api.UpdateStatus(status)
+            api.update_status(status)
     elif argv[1] == '-r': # Fetch replies
-        timeline = api.ApiCall('statuses/mentions','GET')
+        timeline = api.mentions()
         pretty_print(timeline)
     elif argv[1] in ('-t','-c'): # Fetch a timeline
         if len(argv) < 3:
@@ -317,43 +316,38 @@ if len(argv) > 1:
                 get_timeline(argv[2:])
     elif argv[1] == '-f': # Fetch friendlist
         if len(argv) > 2:
-            options = {'screen_name':','.join(argv[2:])}
-            print get_userlines(options)
+            print get_userlines(argv[2:])
         else:
-            options = {'cursor':-1}
             followers = []
-            userlines = ''
-            while options['cursor'] != 0:
-                ret = api.GetFollowers(options)
-                chunk = [u['screen_name'] for u in ret['users']]
-                options2 = {'screen_name':','.join(chunk)}
-                userlines += get_userlines(options2)
-                options['cursor'] = ret['next_cursor']
-            print userlines
+            for follower in tweepy.Cursor(api.followers).items():
+                followers.append(follower.screen_name)
+                if len(followers) > 99:
+                    print get_userlines(followers)
+                    followers = []
+            print get_userlines(followers)
     elif argv[1] == '-s': # Search twitter!
         if len(argv) < 3:
             error('You need some manner of query.')
         else:
             q = ' '.join(argv[2:])
-            options = {'q':q,'lang':'en'}
-            search = api.ApiCall('search','GET',options)
+            search = api.search(q)
             results = []
-            for status in search['statuses']:
+            for status in [i.id for i in search]:
                 try:
-                    results.append(api.ApiCall('statuses/show/%s' % status,'GET'))
+                    results.append(api.get_status(status))
                 except HTTPError:
                     continue
             pretty_print(results)
     elif argv[1] == '-b': # Public timeline
-        timeline = api.GetPublicTimeline()
+        timeline = api.home_timeline()
         pretty_print(timeline)
     else:
         try:
             options = {'count':int(argv[1])}
-            timeline = api.GetHomeTimeline(options)
+            timeline = api.home_timeline()
             pretty_print(timeline)
         except ValueError:
             usage()
 else: # Otherwise just print timeline
-    timeline = api.GetHomeTimeline()
+    timeline = api.home_timeline()
     pretty_print(timeline)
