@@ -1,4 +1,4 @@
-pytc 0.1 - a command line python twitter client
+pytc 0.2 - a command line python twitter client
 Copyright (C) 2010  Bryan Kam
 Email: pytc@vo.racio.us
 
@@ -26,35 +26,11 @@ along with pytc.  If not, see <http://www.gnu.org/licenses/>.
 ================
 
  - python
- - oauth-python-twitter2
-   - python-oauth2 1.2.0
-   - python-simplejson
+ - tweepy
 
-oauth-python-twitter2:
-http://code.google.com/p/oauth-python-twitter2/
+http://github.com/joshthecoder/tweepy
 
-oauth-python-twitter2 requires both oauth2 and simplejson.
-
-oauth2:
-http://github.com/simplegeo/python-oauth2
-
-simplejson:
-http://pypi.python.org/pypi/simplejson/
-
-Once you've installed the oauth-python-twitter2 archive, then put
-the file oauthtwitter.py into the pytc directory or your Python path.
-
-Unfortunately, oauth-python-twitter2 currently has a bug which
-prevents it from working with pytc.  See
-http://code.google.com/p/oauth-python-twitter2/issues/detail?id=1
-
-Since the authors don't seem to be fixing this, I've included
-oauthpython.patch, which can be applied with this command:
-patch -i oauthtwitter.patch
-
-If you use Arch Linux, python-simplejson is in community and 
-python-oauth2 is in the AUR.  You'll still need to get 
-oauth-python-twitter2 though.
+If you use Arch Linux, tweepy-git is in the AUR.
 
 =========
   Usage
@@ -91,5 +67,11 @@ Search for a term:
    doesn't really work if one user is tweeting much more frequently
    than the other, because the responses to the tweets may be lost.
 
- - The dependency situation above is tedious. I may end up trying
-   to reduce this to just OAuth2.
+ - Public timeline doesn't seem to work with tweepy.
+
+=============
+  Todo List
+=============
+
+Saved separately in todo.otl in this repo. It will look prettier 
+with The Vim Outliner: http://bike-nomad.com/vim/vimoutliner.html
