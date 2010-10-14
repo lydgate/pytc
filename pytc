@@ -299,10 +299,10 @@ except NameError:
 if len(argv) > 1:
     if argv[1] == '-u': # Update status
         status = " ".join(argv[2:])
-        if len(status) > 139:
+        if len(status) > 140:
             print 'Error: Status too long (%s characters)' % len(status)
         else:
-            api.UpdateStatus(status)
+            api.update_status(status)
     elif argv[1] == '-r': # Fetch replies
         timeline = api.ApiCall('statuses/mentions','GET')
         pretty_print(timeline)
