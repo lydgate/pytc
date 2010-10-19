@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 #
 # TODO: Incorporate the below warning into a message when
 # you run the app without a proper ~/.pytc
@@ -45,31 +45,31 @@ def white(msg):
     return '\033[1;37m%s\033[0m' % msg
 
 def version():
-    print 'pytc %s Copyright (C) %s Bryan Kam' % (VERSION,YEARS)
+    print('pytc %s Copyright (C) %s Bryan Kam' % (VERSION,YEARS))
 
 def usage():
     version()
-    print '''This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.txt.
+    print('''This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.txt.
 This is free software, and you are welcome to redistribute it under certain 
-conditions; see COPYING.txt for details.'''
-    print
-    print 'Usage:'
-    print '  pytc <tweets>\t\tFetch home timeline'
-    print '  pytc -f [users]\tFetch information about your friends'
-    print '  pytc -t\t\tFetch your Timeline'
-    print '  pytc -b\t\tFetch puBlic timeline'
-    print '  pytc -t <user>\tFetch other users\' Timeline'
-    print '  pytc -c <user>\tFetch other users\' Conversation'
-    print '  pytc -s <terms>\tSearch twitter'
-    print '  pytc -r\t\tFetch Replies'
-    print '  pytc -u <status>\tUpdate your status'
-    print '  pytc -h\t\tShow this Help message'
-    print '  pytc -v\t\tShow Version of this software'
+conditions; see COPYING.txt for details.''')
+    print()
+    print('Usage:')
+    print('  pytc <tweets>\t\tFetch home timeline')
+    print('  pytc -f [users]\tFetch information about your friends')
+    print('  pytc -t\t\tFetch your Timeline')
+    print('  pytc -b\t\tFetch puBlic timeline')
+    print('  pytc -t <user>\tFetch other users\' Timeline')
+    print('  pytc -c <user>\tFetch other users\' Conversation')
+    print('  pytc -s <terms>\tSearch twitter')
+    print('  pytc -r\t\tFetch Replies')
+    print('  pytc -u <status>\tUpdate your status')
+    print('  pytc -h\t\tShow this Help message')
+    print('  pytc -v\t\tShow Version of this software')
 
 def get_input(prompt,vartype,default=''):
     import sys
     while True:
-        var = raw_input(prompt)
+        var = input(prompt)
         if var == 'q':
             sys.exit(0)
         if var == '' and default != '':
@@ -77,7 +77,7 @@ def get_input(prompt,vartype,default=''):
         try:
             vartype(var)
         except:
-            print '%s is not valid. Expected a %s.' % (var,vartype)
+            print('%s is not valid. Expected a %s.' % (var,vartype))
             continue
         return vartype(var)
 
@@ -158,7 +158,7 @@ def pretty_print(timeline):
             line = '%s: %s (%s)' % (user, text, time)
         line = re.sub(user_regex, red('\\1'), line) # Highlight username.
         line = re.sub(url, yellow('\\1'), line)
-        print remove_accents(line)
+        print(remove_accents(line))
 
 def get_userlines(usernames):
     user_detail_list = api.lookup_users(screen_names=usernames)
@@ -195,7 +195,7 @@ def get_timeline(users=None,conv=False):
             try:
                 timeline += api.user_timeline(user,count=count)
             except tweepy.error.TweepError:
-                print 'Error fetching tweets from %s.' % user
+                print('Error fetching tweets from %s.' % user)
         if len(users) > 1:
             timeline = sorted(timeline, key=lambda k: k.created_at,reverse=True)
         if conv:
@@ -207,17 +207,17 @@ def get_timeline(users=None,conv=False):
         userline = get_userlines(usernames)
         timeline = api.user_timeline()
     else:
-        print 'pytc -t will not work without defining your username.'
-        print 'Please specify your username(s) in %s in the form:' % conffile
-        print 'usernames = ["user1","user2"]'
+        print('pytc -t will not work without defining your username.')
+        print('Please specify your username(s) in %s in the form:' % conffile)
+        print('usernames = ["user1","user2"]')
         sys.exit(1)
-    print userline
+    print(userline)
     pretty_print(timeline)
 
 def create_config():
-    print "Could not open %s." % conffile
+    print("Could not open %s." % conffile)
     if get_input("Would you like me to create it? [y/N] ",str) == 'y':
-        print '''
+        print('''
 WARNING ABOUT OAUTH
 
 pytc will write you a sample %s file. This will contain a
@@ -228,7 +228,7 @@ it means that any application can impersonate this one to Twitter.
 It's included here for your convenience.  If you want to register
 your own, just go to http://dev.twitter.com and register an app,
 and replace the values with your own key and secret before running
-pytc again.\n''' % conffile
+pytc again.\n''' % conffile)
         if get_input("Continue? [y/N] ",str) == 'y':
             f = open(conffile,'w')
             f.write('''consumer_key = "XMmmwf1XQvtjjyZE2Cpg"
@@ -239,15 +239,15 @@ consumer_secret = "0zZ71NQjeLMMk9lRI3k8uaFBdKoPywZNpZY20QXU"\n''')
 def oauth_authorize():
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     # User pastes this into their browser to bring back a pin number:
-    print 'You must authorize pytc to interact with your Twitter account.'
-    print 'Please paste the following URL into your browser to obtain a PIN.'
-    print auth.get_authorization_url()
+    print('You must authorize pytc to interact with your Twitter account.')
+    print('Please paste the following URL into your browser to obtain a PIN.')
+    print(auth.get_authorization_url())
     # Get the pin # from the user and get our permanent credentials:
-    oauth_verifier = raw_input('What is the PIN? ')
+    oauth_verifier = input('What is the PIN? ')
     try:
         auth.get_access_token(oauth_verifier)
     except tweepy.TweepError:
-        print 'Error! failed to get access token.'
+        print('Error! failed to get access token.')
         sys.exit(1)
     oauth_token = auth.access_token.key
     oauth_token_secret = auth.access_token.secret
@@ -268,16 +268,16 @@ if len(argv) > 1:
 
 # Anything else will require authentication.
 try:
-    execfile(conffile)
+    exec(compile(open(conffile).read(), conffile, 'exec'))
 except IOError:
     create_config()
-    execfile(conffile)
+    exec(compile(open(conffile).read(), conffile, 'exec'))
 
 try:
     consumer_key, consumer_secret # Check that these are set correctly
 except NameError:
     create_config()
-    execfile(conffile)
+    exec(compile(open(conffile).read(), conffile, 'exec'))
 
 try:
     oauth_token, oauth_token_secret
@@ -292,7 +292,7 @@ url = re.compile('(https?://([-\w\.]+)+(:\d+)?(/([\w/_\-\.]*(\?\S+)?)?)?)')
 try:
     user_regex = re.compile('(@?' + '|'.join(usernames) + ')')
 except NameError:
-    print 'No usernames key in %s. Your username won\'t be highlighted.' % conffile
+    print('No usernames key in %s. Your username won\'t be highlighted.' % conffile)
     usernames = None
     user_regex = re.compile('a^') # This never matches anything
 
@@ -300,7 +300,7 @@ if len(argv) > 1:
     if argv[1] == '-u': # Update status
         status = " ".join(argv[2:])
         if len(status) > 140:
-            print 'Error: Status too long (%s characters)' % len(status)
+            print('Error: Status too long (%s characters)' % len(status))
         else:
             api.update_status(status)
     elif argv[1] == '-r': # Fetch replies
@@ -316,15 +316,15 @@ if len(argv) > 1:
                 get_timeline(argv[2:])
     elif argv[1] == '-f': # Fetch friendlist
         if len(argv) > 2:
-            print get_userlines(argv[2:])
+            print(get_userlines(argv[2:]))
         else:
             followers = []
-            for follower in tweepy.Cursor(api.followers).items():
+            for follower in list(tweepy.Cursor(api.followers).items()):
                 followers.append(follower.screen_name)
                 if len(followers) > 99:
-                    print get_userlines(followers)
+                    print(get_userlines(followers))
                     followers = []
-            print get_userlines(followers)
+            print(get_userlines(followers))
     elif argv[1] == '-s': # Search twitter!
         if len(argv) < 3:
             error('You need some manner of query.')
