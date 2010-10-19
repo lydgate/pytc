@@ -16,4 +16,5 @@ pytc.py
 		| though
 		Eventually this could support profiles, to post to different accounts
 	Get counts working for other commands (e.g. -t, -c)
-	Fix -b, which doesn't get the public timeline
+PKGBUILD
+	Create arch linux PKGBUILD
