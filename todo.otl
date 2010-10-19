@@ -5,7 +5,6 @@ pytc.py
 	| Currently if one person tweets very quickly, you can lose half the
 	| conversation. Rather than grepping for @s, maybe we can search a user's
 	| stream for this somehow?
-	Consider eliminating annoying dependencies and coding oauth myself.
 	Support for alternate config files
 		Possibly change this to named config files
 		E.g., ~/.pytc/user1.rc and so on
@@ -16,6 +15,6 @@ pytc.py
 		| shouldn't write consumer_key and _secret until after that anyway
 		| though
 		Eventually this could support profiles, to post to different accounts
-Create new trash dev account for pytc-public
-	Import module of consumer (containing key and secret)
-	Document how to set up consumer secret if they want to use their own
+	Get counts working for other commands (e.g. -t, -c)
+PKGBUILD
+	Create arch linux PKGBUILD
