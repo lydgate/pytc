@@ -1,3 +1,9 @@
+Hotfix 0.2.2
+ - pytc -b was incorrectly fetching the home timeline rather than
+   the public timeline.
+ - In usage, the default timeline was incorrectly labelled public
+   instead of home.
+
 Hotfix 0.2.1
  - Fixed pytc <count> to specify how many tweets to retrieve.
 
