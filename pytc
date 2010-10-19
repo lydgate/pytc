@@ -339,7 +339,7 @@ if len(argv) > 1:
                     continue
             pretty_print(results)
     elif argv[1] == '-b': # Public timeline
-        timeline = api.home_timeline()
+        timeline = api.public_timeline()
         pretty_print(timeline)
     else:
         try:
