@@ -1,4 +1,4 @@
-pytc 0.2.2 - a command line python twitter client
+pytc 0.2.3 - a command line python twitter client
 Copyright (C) 2010  Bryan Kam
 Email: pytc@vo.racio.us
 
@@ -31,6 +31,16 @@ along with pytc.  If not, see <http://www.gnu.org/licenses/>.
 http://github.com/joshthecoder/tweepy
 
 If you use Arch Linux, tweepy-git is in the AUR.
+
+================
+  Installation
+================
+
+From 0.2.3 pytc uses distutils, so on most platforms you can simply run:
+  python setup.py install
+
+A PKGBUILD for Arch Linux is planned, this will appear both within this 
+package and in the AUR.
 
 =========
   Usage
