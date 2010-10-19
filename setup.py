@@ -8,6 +8,7 @@ setup(
         author_email = 'pytc@vo.racio.us',
         url = 'http://twitter.com/pythontc',
         keywords = ['twitter'],
+        scripts = ['pytc'],
         classifiers = [
             'Programming Language :: Python',
             'Programming Language :: Python :: 2.6'
