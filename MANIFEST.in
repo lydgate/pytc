@@ -1,2 +1,1 @@
-include COPYING.txt
-include CHANGELOG.txt
+include COPYING.txt CHANGELOG.txt pytc
