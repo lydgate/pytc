@@ -1,4 +1,4 @@
-pytc 0.2.3 - a command line python twitter client
+pytc 0.2.4 - a command line python twitter client
 Copyright (C) 2010  Bryan Kam
 Email: pytc@vo.racio.us
 
