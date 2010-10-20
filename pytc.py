@@ -25,7 +25,7 @@ import re
 import sys
 import tweepy
 
-VERSION='0.2.3'
+VERSION='0.2.4'
 YEARS='2010'
 
 conffile = os.path.expanduser('~/.pytcrc')
@@ -327,7 +327,8 @@ if len(argv) > 1:
             print(get_userlines(followers))
     elif argv[1] == '-s': # Search twitter!
         if len(argv) < 3:
-            error('You need some manner of query.')
+            print 'You need some manner of query.'
+            sys.exit(1)
         else:
             q = ' '.join(argv[2:])
             search = api.search(q)
