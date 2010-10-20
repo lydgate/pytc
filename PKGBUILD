@@ -24,5 +24,5 @@ build() {
 package() {
   cd "$srcdir/$pkgname-$pkgname"
 
-  python setup.py install --root=$pkgdir
+  python2 setup.py install --root=$pkgdir
 }
