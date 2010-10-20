@@ -1,3 +1,6 @@
+Hotfix 0.2.4
+ - Fixed error if you enter -s with no query.
+
 Release 0.2.3
  - Use distutils for easier installation of this package.
 
