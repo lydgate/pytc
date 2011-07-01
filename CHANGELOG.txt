@@ -1,3 +1,7 @@
+Hotfix 0.3.1
+ - Bugfix. Bit.ly API interfered with Tweepy API.
+ - Fixed some old version numbers.
+
 Release 0.3
  - New pytc -ub switch which uses python-bitly to shorten any URLs.
  - Made some 2to3 changes to make the future transition to python3
