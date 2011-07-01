@@ -1,3 +1,9 @@
+Release 0.3
+ - New pytc -ub switch which uses python-bitly to shorten any URLs.
+ - Made some 2to3 changes to make the future transition to python3
+   easier.
+ - Added PKGBUILD for Arch Linux.
+
 Hotfix 0.2.5
  - Specify Python2 until Python3 support is added.
 
