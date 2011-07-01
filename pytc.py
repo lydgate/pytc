@@ -68,7 +68,7 @@ conditions; see COPYING.txt for details.''')
 def get_input(prompt,vartype,default=''):
     import sys
     while True:
-        var = input(prompt)
+        var = raw_input(prompt)
         if var == 'q':
             sys.exit(0)
         if var == '' and default != '':
@@ -242,7 +242,7 @@ def oauth_authorize():
     print('Please paste the following URL into your browser to obtain a PIN.')
     print(auth.get_authorization_url())
     # Get the pin # from the user and get our permanent credentials:
-    oauth_verifier = input('What is the PIN? ')
+    oauth_verifier = raw_input('What is the PIN? ')
     try:
         auth.get_access_token(oauth_verifier)
     except tweepy.TweepError:
