@@ -51,7 +51,7 @@ def usage():
     print('''This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.txt.
 This is free software, and you are welcome to redistribute it under certain 
 conditions; see COPYING.txt for details.''')
-    print()
+    print
     print('Usage:')
     print('  pytc <tweets>\t\tFetch home timeline')
     print('  pytc -f [users]\tFetch information about your friends')
