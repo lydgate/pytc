@@ -1,5 +1,5 @@
-pytc 0.2.4 - a command line python twitter client
-Copyright (C) 2010  Bryan Kam
+pytc 0.3 - a command line python twitter client
+Copyright (C) 2010-2011  Bryan Kam
 Email: pytc@vo.racio.us
 
 ==========
@@ -39,8 +39,15 @@ If you use Arch Linux, tweepy-git is in the AUR.
 From 0.2.3 pytc uses distutils, so on most platforms you can simply run:
   python setup.py install
 
-A PKGBUILD for Arch Linux is planned, this will appear both within this 
-package and in the AUR.
+===============
+  Arch Linux
+===============
+
+A PKGBUILD for Arch Linux has been included.  However, since the release 
+tarballs come from Gitorious, I don't have an easy way of md5summing it until 
+the release has been pushed.  My solution is to omit the md5sums key, if you 
+want to run it then you can just run "makepkg -g" and paste in the md5sums 
+before running "makepkg".
 
 =========
   Usage
