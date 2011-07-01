@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-#
-# TODO: Incorporate the below warning into a message when
+#!/usr/bin/env python2
+# # TODO: Incorporate the below warning into a message when
 # you run the app without a proper ~/.pytc
 #
 # This file is part of pytc.
@@ -25,8 +24,8 @@ import re
 import sys
 import tweepy
 
-VERSION='0.2.4'
-YEARS='2010'
+VERSION='0.2.5'
+YEARS='2010-2011'
 
 conffile = os.path.expanduser('~/.pytcrc')
 
