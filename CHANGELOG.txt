@@ -1,3 +1,6 @@
+Hotfix 0.2.5
+ - Specify Python2 until Python3 support is added.
+
 Hotfix 0.2.4
  - Fixed error if you enter -s with no query.
 
