@@ -24,7 +24,7 @@ import re
 import sys
 import tweepy
 
-VERSION='0.3'
+VERSION='0.3.1'
 YEARS='2010-2011'
 
 conffile = os.path.expanduser('~/.pytcrc')
@@ -311,20 +311,18 @@ if len(argv) > 1:
             print('https://code.google.com/p/python-bitly/')
             sys.exit(1)
         try:
-            api = bitly.Api(login=bitly_login,apikey=bitly_apikey)
+            btapi = bitly.Api(login=bitly_login,apikey=bitly_apikey)
         except:
             print('You need to specify your bit.ly login and API key in ~/.pytcrc, e.g.:')
             print('bitly_login="yourname"')
             print('bitly_apikey="yourkey"')
             sys.exit(1)
         status = " ".join(argv[2:])
-        print status
         m = re.findall(url, status)
         for match in m:
             long_url = match[0]
-            short_url = api.shorten(long_url)
+            short_url = btapi.shorten(long_url)
             status = re.sub(long_url, short_url, status)
-        print status
         if len(status) > 140:
             print('Error: Status too long (%s characters)' % len(status))
         else:

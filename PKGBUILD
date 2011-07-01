@@ -1,7 +1,7 @@
 # Maintainer: Bryan Kam <archlinux@vo.racio.us>
 
 pkgname=pytc
-pkgver=0.2.3
+pkgver=0.3.1
 pkgrel=1
 pkgdesc='Command-line Twitter client written in Python'
 arch=('i686' 'x86_64')
