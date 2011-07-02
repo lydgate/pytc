@@ -264,7 +264,7 @@ if len(argv) > 1:
         sys.exit(0)
     elif argv[1] == '-hb': # Show bitly help
         try:
-            from bitly import bitly
+            import bitly
         except ImportError:
             print('You need to install the python-bitly module:')
             print('https://code.google.com/p/python-bitly/')
@@ -315,7 +315,7 @@ if len(argv) > 1:
     if argv[1] == '-u': # Update status
         status = " ".join(argv[2:])
         try:
-            from bitly import bitly
+            import bitly
             try:
                 btapi = bitly.Api(login=bitly_login,apikey=bitly_apikey)
                 m = re.findall(url, status)
