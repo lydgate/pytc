@@ -257,31 +257,6 @@ oauth_token_secret = "%s"\n''' % (oauth_token, oauth_token_secret))
     # Set up api a test API call using our new credentials
     return oauth_token, oauth_token_secret
 
-argv = sys.argv
-if len(argv) > 1:
-    if argv[1] == '-h': # Help
-        usage()
-        sys.exit(0)
-    elif argv[1] == '-hb': # Show bitly help
-        try:
-            import bitly
-        except ImportError:
-            print('You need to install the python-bitly module:')
-            print('https://code.google.com/p/python-bitly/')
-            sys.exit(0)
-        try:
-            btapi = bitly.Api(login=bitly_login,apikey=bitly_apikey)
-        except:
-            print('You need to specify your bit.ly login and API key in ~/.pytcrc, e.g.:')
-            print('bitly_login="yourname"')
-            print('bitly_apikey="yourkey"')
-            sys.exit(0)
-        print('bit.ly appears to be configured correctly!')
-    elif argv[1] == '-v': # Help
-        version()
-        sys.exit(0)
-
-# Anything else will require authentication.
 try:
     exec(compile(open(conffile).read(), conffile, 'exec'))
 except IOError:
@@ -294,6 +269,32 @@ except NameError:
     create_config()
     exec(compile(open(conffile).read(), conffile, 'exec'))
 
+argv = sys.argv
+if len(argv) > 1:
+    if argv[1] == '-h': # Help
+        usage()
+        sys.exit(0)
+    elif argv[1] == '-hb': # Show bitly help
+        try:
+            import bitly
+        except ImportError:
+            print('You need to install the python-bitly module:')
+            print('https://code.google.com/p/python-bitly/')
+            sys.exit(1)
+        try:
+            btapi = bitly.Api(login=bitly_login,apikey=bitly_apikey)
+        except:
+            print('You need to specify your bit.ly login and API key in ~/.pytcrc, e.g.:')
+            print('bitly_login="yourname"')
+            print('bitly_apikey="yourkey"')
+            sys.exit(1)
+        print('bit.ly appears to be configured correctly!')
+        sys.exit(0)
+    elif argv[1] == '-v': # Help
+        version()
+        sys.exit(0)
+
+# Anything else will require authentication.
 try:
     oauth_token, oauth_token_secret
 except NameError:
