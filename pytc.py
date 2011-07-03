@@ -323,9 +323,7 @@ if len(argv) > 1:
                 for match in m:
                     long_url = match[0]
                     short_url = btapi.shorten(long_url)
-                    if short_url.startswith('http://'):
-                        short_url = short_url[len('http://')]
-                    status = re.sub(long_url, short_url, status)
+                    status = re.sub(re.escape(long_url), short_url, status)
             except:
                 pass
         except ImportError:
