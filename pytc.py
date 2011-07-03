@@ -323,11 +323,14 @@ if len(argv) > 1:
                 for match in m:
                     long_url = match[0]
                     short_url = btapi.shorten(long_url)
+                    if short_url.startswith('http://'):
+                        short_url = short_url[len('http://')]
                     status = re.sub(long_url, short_url, status)
             except:
                 pass
         except ImportError:
             pass
+        print(status)
         if len(status) > 140:
             print('Error: Status too long (%s characters)' % len(status))
         else:
