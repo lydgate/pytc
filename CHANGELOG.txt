@@ -1,3 +1,6 @@
+Release 0.3.2
+ - Use bit.ly by default if possible.
+
 Hotfix 0.3.1
  - Bugfix. Bit.ly API interfered with Tweepy API.
  - Fixed some old version numbers.
