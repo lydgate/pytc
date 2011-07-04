@@ -24,7 +24,7 @@ import re
 import sys
 import tweepy
 
-VERSION='0.3.1'
+VERSION='0.3.2'
 YEARS='2010-2011'
 
 conffile = os.path.expanduser('~/.pytcrc')
@@ -51,7 +51,7 @@ def usage():
     print('''This program comes with ABSOLUTELY NO WARRANTY; for details see COPYING.txt.
 This is free software, and you are welcome to redistribute it under certain 
 conditions; see COPYING.txt for details.''')
-    print()
+    print
     print('Usage:')
     print('  pytc <tweets>\t\tFetch home timeline')
     print('  pytc -f [users]\tFetch information about your friends')
@@ -61,9 +61,9 @@ conditions; see COPYING.txt for details.''')
     print('  pytc -c <user>\tFetch other users\' Conversation')
     print('  pytc -s <terms>\tSearch twitter')
     print('  pytc -r\t\tFetch Replies')
-    print('  pytc -u <status>\tUpdate your status')
-    print('  pytc -ub <status>\tUpdate your status and shorten any URLs with bitly')
+    print('  pytc -u <status>\tUpdate your status (optionally shorting URLs with bit.ly)')
     print('  pytc -h\t\tShow this Help message')
+    print('  pytc -hb\t\tShow help on setting up bit.ly')
     print('  pytc -v\t\tShow Version of this software')
 
 def get_input(prompt,vartype,default=''):
@@ -257,16 +257,6 @@ oauth_token_secret = "%s"\n''' % (oauth_token, oauth_token_secret))
     # Set up api a test API call using our new credentials
     return oauth_token, oauth_token_secret
 
-argv = sys.argv
-if len(argv) > 1:
-    if argv[1] == '-h': # Help
-        usage()
-        sys.exit(0)
-    elif argv[1] == '-v': # Help
-        version()
-        sys.exit(0)
-
-# Anything else will require authentication.
 try:
     exec(compile(open(conffile).read(), conffile, 'exec'))
 except IOError:
@@ -279,6 +269,32 @@ except NameError:
     create_config()
     exec(compile(open(conffile).read(), conffile, 'exec'))
 
+argv = sys.argv
+if len(argv) > 1:
+    if argv[1] == '-h': # Help
+        usage()
+        sys.exit(0)
+    elif argv[1] == '-hb': # Show bitly help
+        try:
+            import bitly
+        except ImportError:
+            print('You need to install the python-bitly module:')
+            print('https://code.google.com/p/python-bitly/')
+            sys.exit(1)
+        try:
+            btapi = bitly.Api(login=bitly_login,apikey=bitly_apikey)
+        except:
+            print('You need to specify your bit.ly login and API key in ~/.pytcrc, e.g.:')
+            print('bitly_login="yourname"')
+            print('bitly_apikey="yourkey"')
+            sys.exit(1)
+        print('bit.ly appears to be configured correctly!')
+        sys.exit(0)
+    elif argv[1] == '-v': # Help
+        version()
+        sys.exit(0)
+
+# Anything else will require authentication.
 try:
     oauth_token, oauth_token_secret
 except NameError:
@@ -299,30 +315,20 @@ except NameError:
 if len(argv) > 1:
     if argv[1] == '-u': # Update status
         status = " ".join(argv[2:])
-        if len(status) > 140:
-            print('Error: Status too long (%s characters)' % len(status))
-        else:
-            api.update_status(status)
-    elif argv[1] == '-ub': # Update status and shorten URLs with bitly
         try:
-            from bitly import bitly
+            import bitly
+            try:
+                btapi = bitly.Api(login=bitly_login,apikey=bitly_apikey)
+                m = re.findall(url, status)
+                for match in m:
+                    long_url = match[0]
+                    short_url = btapi.shorten(long_url)
+                    status = re.sub(re.escape(long_url), short_url, status)
+            except:
+                pass
         except ImportError:
-            print('You need to install the python-bitly module:')
-            print('https://code.google.com/p/python-bitly/')
-            sys.exit(1)
-        try:
-            btapi = bitly.Api(login=bitly_login,apikey=bitly_apikey)
-        except:
-            print('You need to specify your bit.ly login and API key in ~/.pytcrc, e.g.:')
-            print('bitly_login="yourname"')
-            print('bitly_apikey="yourkey"')
-            sys.exit(1)
-        status = " ".join(argv[2:])
-        m = re.findall(url, status)
-        for match in m:
-            long_url = match[0]
-            short_url = btapi.shorten(long_url)
-            status = re.sub(long_url, short_url, status)
+            pass
+        print(status)
         if len(status) > 140:
             print('Error: Status too long (%s characters)' % len(status))
         else:
