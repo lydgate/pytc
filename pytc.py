@@ -101,7 +101,7 @@ def pretty_date(time=False):
     elif not time:
         diff = now - now
     else:
-        diff = now - time - timedelta(hours=1) # TODO: Use TZ aware timezones!
+        diff = now - time #- timedelta(hours=1) # TODO: Use TZ aware timezones!
     second_diff = diff.seconds
     day_diff = diff.days
 
