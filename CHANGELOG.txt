@@ -1,11 +1,17 @@
-Release 0.3.2
+Release 0.3.3 (2013-03-21)
+ - Updated to work with tweepy 2.0
+ - Removed public timeline feature since it hasn't worked for years
+ - Translated documentation from text to markdown for Github
+ - Added dates to release versions
+
+Release 0.3.2 (2011-07-04)
  - Use bit.ly by default if possible.
 
 Hotfix 0.3.1
  - Bugfix. Bit.ly API interfered with Tweepy API.
  - Fixed some old version numbers.
 
-Release 0.3
+Release 0.3 (2011-07-01)
  - New pytc -ub switch which uses python-bitly to shorten any URLs.
  - Made some 2to3 changes to make the future transition to python3
    easier.
@@ -17,7 +23,7 @@ Hotfix 0.2.5
 Hotfix 0.2.4
  - Fixed error if you enter -s with no query.
 
-Release 0.2.3
+Release 0.2.3 (2010-10-19)
  - Use distutils for easier installation of this package.
 
 Hotfix 0.2.2
@@ -29,10 +35,9 @@ Hotfix 0.2.2
 Hotfix 0.2.1
  - Fixed pytc <count> to specify how many tweets to retrieve.
 
-Release 0.2
+Release 0.2 (2010-10-14)
  - Switched to tweepy library.
 
-Release 0.1
- - Initial version. Supports tweeting, searching, reading other's 
-   timelines, the public timeline, some basic info about users, 
-   and @replies.
+Release 0.1 (2010-10-10)
+ - Initial version. Supports tweeting, searching, reading other's timelines, 
+   the public timeline, some basic info about users, and @replies.
