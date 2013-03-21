@@ -24,7 +24,7 @@ import re
 import sys
 import tweepy
 
-VERSION='0.3.2'
+VERSION='0.3.3'
 YEARS='2010-2011'
 
 conffile = os.path.expanduser('~/.pytcrc')
