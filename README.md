@@ -53,19 +53,24 @@ Usage is simple. Please see pytc -h.
 Some examples:
 
 Check your Twitter timeline;
-  pytc
+
+    pytc
 
 Show last 75 items on your Twitter timeline:
-  pytc 75
+
+    pytc 75
 
 Update your Twitter status:
-  pytc -u "Testing out pytc. It works!"
+
+    pytc -u "Testing out pytc. It works!"
 
 Read fictionaluser's status:
-  pytc -t fictionaluser
+
+    pytc -t fictionaluser
 
 Search for a term:
-  pytc -s searchterm
+
+    pytc -s searchterm
 
   Known Issues
 ================
