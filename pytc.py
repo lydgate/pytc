@@ -334,7 +334,7 @@ if len(argv) > 1:
         else:
             api.update_status(status)
     elif argv[1] == '-r': # Fetch replies
-        timeline = api.mentions()
+        timeline = api.mentions_timeline()
         pretty_print(timeline)
     elif argv[1] in ('-t','-c'): # Fetch a timeline
         if len(argv) < 3:
