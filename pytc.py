@@ -56,7 +56,6 @@ conditions; see COPYING.txt for details.''')
     print('  pytc <tweets>\t\tFetch home timeline')
     print('  pytc -f [users]\tFetch information about your friends')
     print('  pytc -t\t\tFetch your Timeline')
-    print('  pytc -b\t\tFetch puBlic timeline')
     print('  pytc -t <user>\tFetch other users\' Timeline')
     print('  pytc -c <user>\tFetch other users\' Conversation')
     print('  pytc -s <terms>\tSearch twitter')
@@ -369,9 +368,6 @@ if len(argv) > 1:
                 except HTTPError:
                     continue
             pretty_print(results)
-    elif argv[1] == '-b': # Public timeline
-        timeline = api.public_timeline()
-        pretty_print(timeline)
     else:
         try:
             timeline = api.home_timeline(count=int(argv[1]))
