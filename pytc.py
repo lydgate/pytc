@@ -100,12 +100,12 @@ def pretty_date(time=False):
     elif not time:
         diff = now - now
     else:
-        diff = now - time - timedelta(hours=1) # TODO: Use TZ aware timezones!
+        diff = now - time # TODO: Use TZ aware timezones!
     second_diff = diff.seconds
     day_diff = diff.days
 
     if day_diff < 0:
-        return ''
+        return 'just now'
 
     if day_diff == 0:
         if second_diff < 10:
@@ -135,6 +135,7 @@ def pretty_date(time=False):
     if day_diff < 730:
         return str(day_diff/365) + " year ago"
     return str(day_diff/365) + " years ago"
+
 def hilight(text):
     text = re.sub('(@.*?)(\W|$)',green('\\1')+'\\2',text)
     text = re.sub('(#.*?)(\W|$)',white('\\1')+'\\2',text)
@@ -149,7 +150,7 @@ def pretty_print(timeline):
             orig_user = green('@'+tweet.retweeted_status.user.screen_name)
             text = hilight(tweet.retweeted_status.text)
 
-            line = '%s: RT %s (via %s) (%s)' % (user, text, orig_user, time)
+            line = '%s[%s]: %s (%s)' % (user, orig_user, text, time)
         else:
             # Otherwise, just print the name in blue and the tweet
             text = hilight(tweet.text)
