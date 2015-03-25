@@ -16,9 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with pytc.  If not, see <http://www.gnu.org/licenses/>.
-from time import strftime
 from urllib2 import HTTPError
-import datetime
 import os
 import re
 import sys
@@ -32,6 +30,8 @@ conffile = os.path.expanduser('~/.pytcrc')
 # Colours
 def blue(msg):
     return '\033[1;34m%s\033[0m' % msg
+def gray(msg):
+    return '\033[1;30m%s\033[0m' % msg
 def green(msg):
     return '\033[0;32m%s\033[0m' % msg
 def red(msg):
@@ -144,7 +144,7 @@ def hilight(text):
 def pretty_print(timeline):
     for tweet in timeline:
         user = blue(tweet.user.screen_name)
-        time = pretty_date(tweet.created_at)
+        time = gray(pretty_date(tweet.created_at))
         if hasattr(tweet, 'retweeted_status'): # Check if this tweet is an RT
             # If so, print the user name in green and original twit in blue
             orig_user = green('@'+tweet.retweeted_status.user.screen_name)
@@ -155,7 +155,7 @@ def pretty_print(timeline):
             # Otherwise, just print the name in blue and the tweet
             text = hilight(tweet.text)
 
-            line = '%s: %s (%s)' % (user, text, time)
+            line = '%s: %s %s' % (user, text, time)
         line = re.sub(user_regex, red('\\1'), line) # Highlight username.
         line = re.sub(url, yellow('\\1'), line)
         print(remove_accents(line))
