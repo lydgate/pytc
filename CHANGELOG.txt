@@ -1,3 +1,7 @@
+Release 0.3.4 (2015-03-25)
+ - Change the format of re-tweets and times.
+ - Remove unused modules.
+
 Release 0.3.3 (2013-03-21)
  - Updated to work with tweepy 2.0
  - Removed public timeline feature since it hasn't worked for years

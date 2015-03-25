@@ -1,7 +1,7 @@
 from distutils.core import setup
 setup(
         name = 'pytc',
-        version = '0.3.3',
+        version = '0.3.4',
         py_modules = ['pytc'],
         description = 'Command line Twitter client',
         author = 'Bryan Kam',
